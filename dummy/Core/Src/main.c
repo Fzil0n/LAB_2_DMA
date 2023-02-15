@@ -140,11 +140,11 @@ int main(void)
 		  }
 
 		  //Convert to kelvin
-		  AVGTemp = ((((sumTemp/10)/4096)*3.3 - 0.76)/2.5) + 25 + 273.15;
+		  AVGTemp = ((((sumTemp/10)/4096)*  - 0.76)/2.5) + 25 + 273.15;
 		  //Convert to milli voltage
 		  AVGVoltage = (((sumVoltage/10) * 3.3) / 4096) * 1000 * 2;
 
-		  timestamp += 1000;
+		  timestamp = HAL_GetTick() + 1000;
 	  }
   }
   /* USER CODE END 3 */
