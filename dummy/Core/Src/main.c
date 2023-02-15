@@ -61,10 +61,6 @@ uint16_t sumTemp;
 uint16_t AVGVoltage;
 uint16_t AVGTemp;
 
-
-//Fn prototype
-int bit2VoltageConv(float vmin, float vmax,int data);
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -125,13 +121,16 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  //1 Hz
 	  static uint32_t timestamp = 0;
 	  if(HAL_GetTick() >= timestamp)
 	  {
+		  //Find summation
 		  register int i;
 		  for(i=0;i<10;i++)
 		  {
-			  if(i == 0){
+			  if(i == 0)
+			  {
 				  sumTemp = 0;
 				  sumVoltage = 0;
 			  }
@@ -139,8 +138,12 @@ int main(void)
 			  sumTemp    += ADC_DMA[i].MCUTempRead;
 			  sumVoltage += ADC_DMA[i].voltageRead;
 		  }
+
+		  //Convert to kelvin
 		  AVGTemp = ((((sumTemp/10)/4096)*3.3 - 0.76)/2.5) + 25 + 273.15;
+		  //Convert to milli voltage
 		  AVGVoltage = (((sumVoltage/10) * 3.3) / 4096) * 1000 * 2;
+
 		  timestamp += 1000;
 	  }
   }
@@ -341,14 +344,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-
-//void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
-//{
-//	HAL_ADC_Start_DMA(&hadc1, &ADC_DMA, 20);
-
-
-
 
 /* USER CODE END 4 */
 

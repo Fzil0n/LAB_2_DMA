@@ -1046,10 +1046,10 @@ int main(void)
  8000cd6:	4958      	ldr	r1, [pc, #352]	; (8000e38 <main+0x180>)
  8000cd8:	4858      	ldr	r0, [pc, #352]	; (8000e3c <main+0x184>)
  8000cda:	f000 fd8f 	bl	80017fc <HAL_ADC_Start_DMA>
-  {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  //1 Hz
 	  static uint32_t timestamp = 0;
 	  if(HAL_GetTick() >= timestamp)
  8000cde:	f000 fc2d 	bl	800153c <HAL_GetTick>
@@ -1059,14 +1059,16 @@ int main(void)
  8000ce8:	429a      	cmp	r2, r3
  8000cea:	d3f8      	bcc.n	8000cde <main+0x26>
 	  {
+		  //Find summation
 		  register int i;
 		  for(i=0;i<10;i++)
  8000cec:	2400      	movs	r4, #0
  8000cee:	e01b      	b.n	8000d28 <main+0x70>
 		  {
-			  if(i == 0){
+			  if(i == 0)
  8000cf0:	2c00      	cmp	r4, #0
  8000cf2:	d105      	bne.n	8000d00 <main+0x48>
+			  {
 				  sumTemp = 0;
  8000cf4:	4b53      	ldr	r3, [pc, #332]	; (8000e44 <main+0x18c>)
  8000cf6:	2200      	movs	r2, #0
@@ -1102,8 +1104,8 @@ int main(void)
  8000d28:	2c09      	cmp	r4, #9
  8000d2a:	dde1      	ble.n	8000cf0 <main+0x38>
 		  }
-//		  AVGTemp = (((sumTemp/10)/4095) * 3.3 -0.76)/0.0025 + 25;
-//		  AVGVoltage = (sumVoltage/10)/4095 * 3.3;
+
+		  //Convert to kelvin
 		  AVGTemp = ((((sumTemp/10)/4096)*3.3 - 0.76)/2.5) + 25 + 273.15;
  8000d2c:	4b45      	ldr	r3, [pc, #276]	; (8000e44 <main+0x18c>)
  8000d2e:	881b      	ldrh	r3, [r3, #0]
@@ -1153,6 +1155,7 @@ int main(void)
  8000da0:	b29a      	uxth	r2, r3
  8000da2:	4b2d      	ldr	r3, [pc, #180]	; (8000e58 <main+0x1a0>)
  8000da4:	801a      	strh	r2, [r3, #0]
+		  //Convert to milli voltage
 		  AVGVoltage = (((sumVoltage/10) * 3.3) / 4096) * 1000 * 2;
  8000da6:	4b28      	ldr	r3, [pc, #160]	; (8000e48 <main+0x190>)
  8000da8:	881b      	ldrh	r3, [r3, #0]
@@ -1195,7 +1198,6 @@ int main(void)
  8000e06:	b29a      	uxth	r2, r3
  8000e08:	4b16      	ldr	r3, [pc, #88]	; (8000e64 <main+0x1ac>)
  8000e0a:	801a      	strh	r2, [r3, #0]
-
 
 		  timestamp += 1000;
  8000e0c:	4b0c      	ldr	r3, [pc, #48]	; (8000e40 <main+0x188>)
@@ -2614,7 +2616,7 @@ __weak uint32_t HAL_GetTick(void)
   return uwTick;
  8001540:	4b03      	ldr	r3, [pc, #12]	; (8001550 <HAL_GetTick+0x14>)
  8001542:	681b      	ldr	r3, [r3, #0]
-}
+ }
  8001544:	4618      	mov	r0, r3
  8001546:	46bd      	mov	sp, r7
  8001548:	f85d 7b04 	ldr.w	r7, [sp], #4
